@@ -136,92 +136,100 @@ class _HomeSCreenState extends State<HomeSCreen> {
   }
 
 Widget articleCard(ArticleEntity article, BuildContext context) {
-  return Card(
-    margin: const EdgeInsets.only(bottom: 12),
-    elevation: 2,
-    child: Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: article.urlToImage != null
-                ? Image.network(
-                    article.urlToImage!,
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.image, size: 100),
-                  )
-                : const Icon(Icons.image, size: 100),
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  article.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                Text(
-                  article.sourceName,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                  ),
-                ),
-
-                const SizedBox(height: 4),
-
-                Row(
-                  children: [
-                    Text(
-                      article.publishedAt != null
-                          ? DateFormat('dd MMM yyyy')
-                              .format(article.publishedAt!)
-                          : '',
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     context.read<BookMarkProvider>().saveBookmark(article);
-                    //   }, 
-                    //   child: Text('BookMark')
-                    // )
-                    Consumer<BookMarkProvider>(
-                      builder: (context, provider, _) {
-                        return IconButton(
-                          onPressed: () {
-                            provider.toggleBookMark(article);
-                          }, icon: Icon(
-                            provider.isBookMark(article.url)
-                            ? Icons.bookmark
-                            : Icons.bookmark_border
-                          ));
-                      },
+  return GestureDetector(
+    onTap: () {
+      context.push(
+        '/article_detail',
+        extra: article
+      );
+    } ,
+    child: Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: article.urlToImage != null
+                  ? Image.network(
+                      article.urlToImage!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.image, size: 100),
                     )
-                  ],
-                ),
-              ],
+                  : const Icon(Icons.image, size: 100),
             ),
-          ),
-        ],
+    
+            const SizedBox(width: 12),
+    
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    article.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+    
+                  const SizedBox(height: 8),
+    
+                  Text(
+                    article.sourceName,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+    
+                  const SizedBox(height: 4),
+    
+                  Row(
+                    children: [
+                      Text(
+                        article.publishedAt != null
+                            ? DateFormat('dd MMM yyyy')
+                                .format(article.publishedAt!)
+                            : '',
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
+                      ),
+    
+                      // ElevatedButton(
+                      //   onPressed: () {
+                      //     context.read<BookMarkProvider>().saveBookmark(article);
+                      //   }, 
+                      //   child: Text('BookMark')
+                      // )
+                      Consumer<BookMarkProvider>(
+                        builder: (context, provider, _) {
+                          return IconButton(
+                            onPressed: () {
+                              provider.toggleBookMark(article);
+                            }, icon: Icon(
+                              provider.isBookMark(article.url)
+                              ? Icons.bookmark
+                              : Icons.bookmark_border
+                            ));
+                        },
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

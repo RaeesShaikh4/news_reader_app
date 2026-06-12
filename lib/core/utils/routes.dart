@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/screens/bookmark_screen.dart';
+import 'package:news_reader_app/features/home/domain/entities/article_entity.dart';
+import 'package:news_reader_app/features/home/presentation/screens/article_details_screen.dart';
 import 'package:news_reader_app/features/home/presentation/screens/home_screen.dart';
 
 
@@ -20,6 +22,13 @@ GoRouter createRouter(bool isLoggedIn){
       GoRoute(
         path: '/bookmark',
         builder: (context, state) => const BookMarkScreen()
+      ),
+      GoRoute(
+        path: '/article_detail',
+        builder: (context, state) {
+          final article = state.extra as ArticleEntity;
+          return ArticleDetailsScreen(article: article);
+        } 
       )
     ]
   );
