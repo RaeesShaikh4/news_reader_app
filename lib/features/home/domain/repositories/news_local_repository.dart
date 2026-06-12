@@ -4,7 +4,4 @@ import 'package:news_reader_app/features/home/domain/entities/article_entity.dar
 import 'package:news_reader_app/features/home/domain/entities/news_entity.dart';
 
 abstract interface class NewsLocalRepository { 
-     Future<void> saveArticle(ArticleEntity  articleModel);
-   Future<List<ArticleEntity>> getBookMarkedArticle();
-   Future<void> removeArticle(String url);
 }

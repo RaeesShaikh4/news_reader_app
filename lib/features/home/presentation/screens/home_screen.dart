@@ -6,6 +6,7 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
+import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
 import 'package:news_reader_app/features/home/data/models/article_model.dart';
 import 'package:news_reader_app/features/home/domain/entities/article_entity.dart';
 import 'package:news_reader_app/features/home/presentation/provider/home_provider.dart';
@@ -199,7 +200,7 @@ Widget articleCard(ArticleEntity article, BuildContext context) {
 
                     ElevatedButton(
                       onPressed: () {
-                        context.read<NewsProvider>().saveBookmark(article);
+                        context.read<BookMarkProvider>().saveBookmark(article);
                       }, 
                       child: Text('BookMark')
                     )

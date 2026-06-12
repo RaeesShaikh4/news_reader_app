@@ -3,31 +3,30 @@ import 'package:news_reader_app/core/utils/result.dart';
 import 'package:news_reader_app/features/home/data/models/article_model.dart';
 import 'package:news_reader_app/features/home/domain/entities/article_entity.dart';
 import 'package:news_reader_app/features/home/domain/use_cases/get_articles_list.dart'; 
-import 'package:news_reader_app/features/home/domain/use_cases/save_bookmarked_article.dart';
+import 'package:news_reader_app/features/bookmarks/domain/use_cases/save_bookmarked_article.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum ArticleStatus { inital , loading, loaded, error}
 
 class NewsProvider extends ChangeNotifier {
   final GetArticleListUseCase _getArticleUsecase;
-  final SaveArticleAtBokkMarked _saveArticleBookmark; 
+  // final SaveArticleAtBokkMarked _saveArticleBookmark; 
 
   
 
   NewsProvider({
     required GetArticleListUseCase getArticleUsecase,
-    required SaveArticleAtBokkMarked saveArticleBookmar, 
+    // required SaveArticleAtBokkMarked saveArticleBookmar, 
     
-  }) : _getArticleUsecase = getArticleUsecase, _saveArticleBookmark = saveArticleBookmar;
+  }) : _getArticleUsecase = getArticleUsecase;
+  //  _saveArticleBookmark = saveArticleBookmar
 
   List<ArticleEntity> _articles = []; 
-  List<ArticleEntity> _bookMarkedArticles = []; 
   ArticleEntity? _selectedArticle;
   ArticleStatus _status = ArticleStatus.inital;
   String? _error;
 
   List<ArticleEntity> get articles => _articles;
-  List<ArticleEntity> get bookMarkedArticles => _bookMarkedArticles;
   ArticleEntity? get selectedArticle => _selectedArticle;
   ArticleStatus get status => _status;
   String? get error => _error;
@@ -53,11 +52,11 @@ class NewsProvider extends ChangeNotifier {
 
   }
 
-Future<void> saveBookmark(ArticleEntity  article) async {
-  await _saveArticleBookmark(articleEntity: article);
-  // await getBookMarkedArticles();
-  notifyListeners();
-}
+// Future<void> saveBookmark(ArticleEntity  article) async {
+//   await _saveArticleBookmark(articleEntity: article);
+//   // await getBookMarkedArticles();
+//   notifyListeners();
+// }
 
 
 

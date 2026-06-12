@@ -11,4 +11,14 @@ class BookMarkLocalRepositoryImpl implements BookMarkLocalRepository {
     return dataSource.getBookMarkedArticle();
 
   }
+  
+  @override
+  Future<void> removeArticle(String url) async {
+    return dataSource.removeArticle(url);
+  }
+  
+ @override
+  Future<void> saveArticle(ArticleEntity  articleModel) async {  
+     await dataSource.saveArticle(articleModel); 
+  } 
 }

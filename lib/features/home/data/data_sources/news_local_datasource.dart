@@ -7,10 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 abstract interface class NewsLocalDataSource {  
 
-   Future<void> saveArticle(ArticleEntity  articleModel);
-   Future<List<ArticleEntity>> getBookMarkedArticle();
-   Future<void> removeArticle(String url);
-
 }
 
 class NewsLocalDataSourceImple implements NewsLocalDataSource {
@@ -20,22 +16,6 @@ class NewsLocalDataSourceImple implements NewsLocalDataSource {
 
   const NewsLocalDataSourceImple(this._box); 
 
-@override
-  Future<void> saveArticle(ArticleEntity  article) async{
-    final model = ArticleModel.fromEntity(article);
-    await _box.put(article.url, model);
-  }
-
-  @override
-  Future<List<ArticleEntity>> getBookMarkedArticle() async{
-    return _box.values.map((model) => model.toEntity()).toList();
-
-  }
-
-@override
-Future<void> removeArticle(String url) async{
-  return _box.delete(url);
-}
 
   
 }

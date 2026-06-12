@@ -11,21 +11,5 @@ import 'package:news_reader_app/features/home/domain/repositories/news_reposity.
 class NewsLocalRepositorisImpl implements NewsLocalRepository {
   final NewsLocalDataSource dataSource;
   const NewsLocalRepositorisImpl(this.dataSource);
-
-  @override
-  Future<List<ArticleEntity>> getBookMarkedArticle() {
-    return dataSource.getBookMarkedArticle();
-
-  }
-
-  @override
-  Future<void> removeArticle(String url) async{
-     await dataSource.removeArticle(url); 
-  }
-
-  @override
-  Future<void> saveArticle(ArticleEntity  articleModel) async {  
-     await dataSource.saveArticle(articleModel); 
-  } 
  
 }

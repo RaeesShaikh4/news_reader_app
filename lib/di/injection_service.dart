@@ -14,6 +14,7 @@ import 'package:news_reader_app/features/bookmarks/data/data_sources/bookmark_lo
 import 'package:news_reader_app/features/bookmarks/data/repository/book_mark_local_repo_impl.dart';
 import 'package:news_reader_app/features/bookmarks/domain/repository/book_mark_local_repo.dart';
 import 'package:news_reader_app/features/bookmarks/domain/use_cases/get_bookmarks_use_case.dart';
+import 'package:news_reader_app/features/bookmarks/domain/use_cases/remove_bookmark_use_case.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
 import 'package:news_reader_app/features/home/data/data_sources/news_local_datasource.dart';
 import 'package:news_reader_app/features/home/data/data_sources/news_remote_datasource.dart';
@@ -23,7 +24,7 @@ import 'package:news_reader_app/features/home/data/repositories/news_reposity_im
 import 'package:news_reader_app/features/home/domain/repositories/news_local_repository.dart';
 import 'package:news_reader_app/features/home/domain/repositories/news_reposity.dart';
 import 'package:news_reader_app/features/home/domain/use_cases/get_articles_list.dart'; 
-import 'package:news_reader_app/features/home/domain/use_cases/save_bookmarked_article.dart';
+import 'package:news_reader_app/features/bookmarks/domain/use_cases/save_bookmarked_article.dart';
 import 'package:news_reader_app/features/home/presentation/provider/home_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -87,6 +88,7 @@ final prefs = await SharedPreferences.getInstance();
 
   sl.registerLazySingleton(() => GetArticleListUseCase(sl())); 
   sl.registerLazySingleton(() => SaveArticleAtBokkMarked(sl())); 
+  sl.registerLazySingleton(() => RemaveBookmarkArticle(sl())); 
   sl.registerLazySingleton(() => GetBookmarkedArticles(sl())); 
 
   sl.registerLazySingleton(() => LogOutUseCase(sl()));
@@ -94,10 +96,10 @@ final prefs = await SharedPreferences.getInstance();
   sl.registerLazySingleton(() => SetUserNameCAse(sl()));
 
   sl.registerFactory(
-    () => NewsProvider(getArticleUsecase: sl(), saveArticleBookmar: sl())
+    () => NewsProvider(getArticleUsecase: sl(),)
   );
 
   sl.registerFactory(
-    () => BookMarkProvider(getBookmarkArticles: sl())
+    () => BookMarkProvider(getBookmarkArticles: sl(),  saveArticleBookmar: sl(), removeBookMarkedArticles: sl())
   );
 }
