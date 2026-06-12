@@ -59,11 +59,14 @@ bool isBookMark(String url) {
 Future<void> toggleBookMark(ArticleEntity article)async{
   if(_bookedMarksUrls.contains(article.url)){
     await removeBookMark(article);
-    _bookMarkedArticles.remove(article.url);
+    _bookedMarksUrls.remove(article.url);
+    _bookMarkedArticles.removeWhere((e) => e.url == article.url);
+
   } else {
    await saveBookmark(article);
 
     _bookedMarksUrls.add(article.url);
+    _bookMarkedArticles.add(article);
   }
   notifyListeners();
 }

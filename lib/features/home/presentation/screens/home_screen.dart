@@ -198,11 +198,23 @@ Widget articleCard(ArticleEntity article, BuildContext context) {
                       ),
                     ),
 
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<BookMarkProvider>().saveBookmark(article);
-                      }, 
-                      child: Text('BookMark')
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     context.read<BookMarkProvider>().saveBookmark(article);
+                    //   }, 
+                    //   child: Text('BookMark')
+                    // )
+                    Consumer<BookMarkProvider>(
+                      builder: (context, provider, _) {
+                        return IconButton(
+                          onPressed: () {
+                            provider.toggleBookMark(article);
+                          }, icon: Icon(
+                            provider.isBookMark(article.url)
+                            ? Icons.bookmark
+                            : Icons.bookmark_border
+                          ));
+                      },
                     )
                   ],
                 ),
