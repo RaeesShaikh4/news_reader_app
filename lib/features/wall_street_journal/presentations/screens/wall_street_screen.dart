@@ -2,61 +2,41 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
-import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
-import 'package:news_reader_app/features/home/data/models/article_model.dart';
-import 'package:news_reader_app/features/home/domain/entities/article_entity.dart';
 import 'package:news_reader_app/features/home/presentation/provider/home_provider.dart';
 import 'package:news_reader_app/features/home/presentation/screens/widgets/custom_drawer.dart';
+import 'package:news_reader_app/features/wall_street_journal/domain/entities/wall_street_article_entity.dart';
+import 'package:news_reader_app/features/wall_street_journal/presentations/provider/wall_street_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
 
-class HomeSCreen extends StatefulWidget {
-  const HomeSCreen({super.key});
+class WallStreetScreen extends StatefulWidget {
+  const WallStreetScreen({super.key});
 
   @override
-  State<HomeSCreen> createState() => _HomeSCreenState();
+  State<WallStreetScreen> createState() => WallStreetScreenState();
 }
 
-class _HomeSCreenState extends State<HomeSCreen> {
-  String? userName;
-
-  // Future<void> logout(BuildContext context) async {
-  //   print('logeed out-----');
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.clear();
-  //   context.pushReplacement('/login');
-  // }
-
+class WallStreetScreenState extends State<WallStreetScreen> {
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<NewsProvider>().getTopHeadlines();
-      context.read<BookMarkProvider>().getBookMarkedArticles();
-      setName();
+      context.read<WallStreetProvider>().getWallStreetJournal();
     });
-  }
-
-  setName() async {
-    final result = await context.read<LoginProvider>().setUserName();
-    userName = result;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Home'),
+          title: const Text('Wall Street Journal'),
         ),
-        drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
+        drawer: Consumer<WallStreetProvider>(builder: (context, provider, _) {
           return CustomizeDrawerScreen(
-            email: userName,
+            email: '',
             isLoggedOutTapped: () async {
               final result = await context.read<LoginProvider>().logout();
               if (result == true) {
@@ -75,13 +55,21 @@ class _HomeSCreenState extends State<HomeSCreen> {
         }),
         body: RefreshIndicator(
           onRefresh: () async {
-          
+            // await context.read<NewsProvider>().getTopHeadlines();
+            // final box = Hive.box<ArticleModel>('BookMardked_articles');
+            // print('Count: ${box.length}');
+            // for (final article in box.values) {
+            //   print(article.title);
+            // }
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<WallStreetProvider>().getWallStreetJournal();
+            });
           },
-          child: Consumer<NewsProvider>(builder: (context, provider, _) {
+          child: Consumer<WallStreetProvider>(builder: (context, provider, _) {
             if (provider.isLoading)
               return Center(child: CircularProgressIndicator());
 
-            if (provider.status == ArticleStatus.error) {
+            if (provider.status == WallStreetArtivcleStatus.error) {
               return _buildError(context, provider.error!);
             }
 
@@ -110,7 +98,8 @@ Widget _buildError(BuildContext context, String message) {
   );
 }
 
-Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
+Widget _buildList(
+    List<WallStreetArticleEntity> articles, BuildContext context) {
   return ListView.builder(
     padding: const EdgeInsets.all(12),
     itemCount: articles.length,
@@ -118,7 +107,7 @@ Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
   );
 }
 
-Widget articleCard(ArticleEntity article, BuildContext context) {
+Widget articleCard(WallStreetArticleEntity article, BuildContext context) {
   return GestureDetector(
     onTap: () {
       context.push('/article_detail', extra: article);

@@ -1,8 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:news_reader_app/core/constant/app_constants.dart';
 import 'package:news_reader_app/core/utils/routes.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
+import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
+import 'package:news_reader_app/main.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -11,19 +14,17 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-
-class _LoginScreenState extends State<LoginScreen>{
-
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-@override
-void initState() {
-  super.initState();
-}
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final loginProvider = Provider.of<LoginProvider>(context);
     return Scaffold(
@@ -39,86 +40,80 @@ void initState() {
               children: [
                 Text(
                   'Sign in',
-                  style: TextStyle(
-                    fontSize: 22,
-                    color: AppConstants.blue
-                  ),
+                  style: TextStyle(fontSize: 22, color: AppConstants.blue),
                 ),
-                const SizedBox(height: 40,),
-            
-            
+                const SizedBox(
+                  height: 40,
+                ),
                 Consumer<LoginProvider>(
-                  builder: (context, loginProvider, child
-                ) {
-                    return TextFormField(    
-                      controller: emailController,   
-                      onChanged: loginProvider.validateEmail,
-                      decoration: InputDecoration(
-                        hintText: 'Enter Email',
-                        errorText: loginProvider.emailError,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),              
-                    );
-                  }
+                    builder: (context, loginProvider, child) {
+                  return TextFormField(
+                    controller: emailController,
+                    onChanged: loginProvider.validateEmail,
+                    decoration: InputDecoration(
+                      hintText: 'Enter Email',
+                      errorText: loginProvider.emailError,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  );
+                }),
+                const SizedBox(
+                  height: 20,
                 ),
-                const SizedBox(height: 20,),
-                
-                 Consumer<LoginProvider>(
-                  builder: (context, loginProvider, child
-                ) {
-                    return TextFormField(    
-                      controller: passwordController, 
-                      onChanged: loginProvider.validatePassword,
-                      decoration: InputDecoration(
-                        hintText: 'Enter password',
-                        errorText: loginProvider.passwordError,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),              
-                                   );
-                  }
+                Consumer<LoginProvider>(
+                    builder: (context, loginProvider, child) {
+                  return TextFormField(
+                    controller: passwordController,
+                    onChanged: loginProvider.validatePassword,
+                    decoration: InputDecoration(
+                      hintText: 'Enter password',
+                      errorText: loginProvider.passwordError,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  );
+                }),
+                const SizedBox(
+                  height: 20,
                 ),
-                    
-               const SizedBox(height: 20,),
-                    
-               GestureDetector(
-                onTap: () async {
-                  final success = await loginProvider.login(email: emailController.text, passowrd: passwordController.text);
-        
-                  if(success == true){
-                    context.go('/home');
-                  }
-                  
-                },
-                child: Container(
-                  width: size.width,
-                  decoration: BoxDecoration(
-                    color: AppConstants.blue,
-                    borderRadius: BorderRadius.all(Radius.circular(12))
+                GestureDetector(
+                  onTap: () async {
+                    final success = await loginProvider.login(
+                        email: emailController.text,
+                        passowrd: passwordController.text);
+                        RestartWidget.restartApp(context);
+
+                    if (success == true) {
+                      // Clear previous user's in-memory bookmarks before navigating
+                      if (context.mounted) {
+                        context.read<BookMarkProvider>().clearBookmarks();
+                      }
+                      context.go('/home');
+                    }
+                  },
+                  child: Container(
+                    width: size.width,
+                    decoration: BoxDecoration(
+                        color: AppConstants.blue,
+                        borderRadius: BorderRadius.all(Radius.circular(12))),
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        'Log in',
+                        style:
+                            TextStyle(fontSize: 16, color: AppConstants.white),
+                      ),
+                    ),
                   ),
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      'Log in',
-                       style: TextStyle(
-                    fontSize: 16,
-                    color: AppConstants.white
-                  ),
-                  ),
-                  ),
-                ),
-               )
-            
+                )
               ],
             ),
           ),
-        
         ),
       ),
     );
-
   }
 }

@@ -23,16 +23,25 @@ import 'package:news_reader_app/features/home/data/repositories/news_local_repos
 import 'package:news_reader_app/features/home/data/repositories/news_reposity_impl.dart';
 import 'package:news_reader_app/features/home/domain/repositories/news_local_repository.dart';
 import 'package:news_reader_app/features/home/domain/repositories/news_reposity.dart';
-import 'package:news_reader_app/features/home/domain/use_cases/get_articles_list.dart'; 
+import 'package:news_reader_app/features/home/domain/use_cases/get_articles_list.dart';
 import 'package:news_reader_app/features/bookmarks/domain/use_cases/save_bookmarked_article.dart';
 import 'package:news_reader_app/features/home/presentation/provider/home_provider.dart';
+import 'package:news_reader_app/features/wall_street_journal/data/data_sources/wall_street_journal_remote_datasorce.dart';
+import 'package:news_reader_app/features/wall_street_journal/data/models/wall_street_article_model.dart';
+import 'package:news_reader_app/features/wall_street_journal/data/repositories/wall_street_journal_remote_repository_impl.dart';
+import 'package:news_reader_app/features/wall_street_journal/domain/repositories/wall_street_repository.dart';
+import 'package:news_reader_app/features/wall_street_journal/domain/use_case/get_wall_street_journal_use_case.dart';
+import 'package:news_reader_app/features/wall_street_journal/presentations/provider/wall_street_provider.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
 
-Future<void> initDependencies() async {
-final prefs = await SharedPreferences.getInstance();
+Future<void> initDependencies({
+  required Box<ArticleModel> articleBox,
+  // required Box<WallStreetArticleModel> wallStreetArticleBox,
+}) async {
+  final prefs = await SharedPreferences.getInstance();
 
   sl.registerLazySingleton<Dio>(() {
     final dio = Dio(BaseOptions(baseUrl: ApiConstants.baseUrl));
@@ -47,13 +56,23 @@ final prefs = await SharedPreferences.getInstance();
     ));
     return dio;
   });
-  
-  sl.registerLazySingleton<SharedPreferences>(
-    () => prefs
-  );
+
+  sl.registerLazySingleton<SharedPreferences>(() => prefs);
+
+  // model dependencies
+
+  sl.registerLazySingleton<Box<ArticleModel>>(() => articleBox);
+
+  // sl.registerLazySingleton<Box<WallStreetArticleModel>>(
+  //     () => wallStreetArticleBox);
+
+  // data dependencies
 
   sl.registerLazySingleton<NewsRemoteDataSource>(
       () => NewsRemoteDataSouceImpl(sl()));
+
+  sl.registerLazySingleton<WallStreetJournalRemoteDatasorce>(
+      () => WallStreetJournalRemoteDataSouceImpl(sl()));
 
   sl.registerLazySingleton<NewsLocalDataSource>(
       () => NewsLocalDataSourceImple(sl<Box<ArticleModel>>()));
@@ -62,44 +81,50 @@ final prefs = await SharedPreferences.getInstance();
       () => AuthLocalDataSourceImple(sl()));
 
   sl.registerLazySingleton<BookMarkLocalDataSource>(
-      () => BookMarkLocalDataSourceImple(sl()));
+      () => BookMarkLocalDataSourceImple(sl<Box<ArticleModel>>()));
 
-  sl.registerLazySingleton<NewsRepository>(
-    () => NewsRepositorisImpl(sl())
-  );
+  // domain repositories
+
+  sl.registerLazySingleton<NewsRepository>(() => NewsRepositorisImpl(sl()));
+
+  sl.registerLazySingleton<WallStreetRepository>(
+      () => WallStreetJournalRemoteRepositoryImpl(sl()));
 
   sl.registerLazySingleton<BookMarkLocalRepository>(
-    () => BookMarkLocalRepositoryImpl(sl())
-  );
+      () => BookMarkLocalRepositoryImpl(sl()));
 
   sl.registerLazySingleton<NewsLocalRepository>(
-    () => NewsLocalRepositorisImpl(sl())
-  );
+      () => NewsLocalRepositorisImpl(sl()));
 
   sl.registerLazySingleton<AuthLocalRepository>(
-    () => AuthLocalRepositoryImpl(sl())
-  );
+      () => AuthLocalRepositoryImpl(sl()));
 
-  sl.registerLazySingleton<Box<ArticleModel>>(
-    () => Hive.box<ArticleModel>('BookMardked_articles')
-  );
+  // provider dependencies
 
-  sl.registerLazySingleton<LoginProvider>(() => LoginProvider(logOutUseCase: sl(), logInUseCase: sl(), setUserNameCase: sl()));
+  sl.registerLazySingleton<LoginProvider>(() => LoginProvider(
+      logOutUseCase: sl(), logInUseCase: sl(), setUserNameCase: sl()));
 
-  sl.registerLazySingleton(() => GetArticleListUseCase(sl())); 
-  sl.registerLazySingleton(() => SaveArticleAtBokkMarked(sl())); 
-  sl.registerLazySingleton(() => RemaveBookmarkArticle(sl())); 
-  sl.registerLazySingleton(() => GetBookmarkedArticles(sl())); 
+  sl.registerFactory(() => NewsProvider(
+        getArticleUsecase: sl(),
+      ));
+
+  sl.registerFactory(() => WallStreetProvider(
+        getWallStreetJournalUseCase: sl(),
+      ));
+
+  sl.registerFactory(() => BookMarkProvider(
+      getBookmarkArticles: sl(),
+      saveArticleBookmar: sl(),
+      removeBookMarkedArticles: sl()));
+
+// use case dependencies
+  sl.registerLazySingleton(() => GetArticleListUseCase(sl()));
+  sl.registerLazySingleton(() => SaveArticleAtBokkMarked(sl()));
+  sl.registerLazySingleton(() => RemaveBookmarkArticle(sl()));
+  sl.registerLazySingleton(() => GetBookmarkedArticles(sl()));
 
   sl.registerLazySingleton(() => LogOutUseCase(sl()));
   sl.registerLazySingleton(() => LogInUseCase(sl()));
   sl.registerLazySingleton(() => SetUserNameCAse(sl()));
-
-  sl.registerFactory(
-    () => NewsProvider(getArticleUsecase: sl(),)
-  );
-
-  sl.registerFactory(
-    () => BookMarkProvider(getBookmarkArticles: sl(),  saveArticleBookmar: sl(), removeBookMarkedArticles: sl())
-  );
+  sl.registerLazySingleton(() => GetWallStreetJournalUseCase(sl()));
 }

@@ -13,7 +13,7 @@ import 'package:news_reader_app/features/home/presentation/provider/home_provide
 import 'package:news_reader_app/features/home/presentation/screens/widgets/custom_drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart'; 
+import 'package:shimmer/shimmer.dart';
 
 class BookMarkScreen extends StatefulWidget {
   const BookMarkScreen({super.key});
@@ -23,105 +23,96 @@ class BookMarkScreen extends StatefulWidget {
 }
 
 class _BookMarkScreenState extends State<BookMarkScreen> {
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookMarkProvider>().getBookMarkedArticles(); 
+      context.read<BookMarkProvider>().getBookMarkedArticles();
     });
-
   }
 
-
   @override
-  Widget build(BuildContext context) { 
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BookMarks'),
-      ),
+        appBar: AppBar(
+          title: const Text('BookMarks'),
+        ),
+        drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
+          return CustomizeDrawerScreen(
+            email:  '',
+           isLoggedOutTapped:  () async {
+              final result = await context.read<LoginProvider>().logout();
+              if (result == true) {
+                context.read<BookMarkProvider>().clearBookmarks();
+                context.pushReplacement('/login');
+              }
+            },
+           toBookMarkScreen:  () {
+            },
+            
+           toWallStreetHJournal:  () {
+              context.go('/wallStreel');
+            },
+           toHomeScreen:  () {
+            context.go('/home');
 
-      drawer: Consumer<NewsProvider>(
-          builder:(context, provider, _) {
-           return CustomizeDrawerScreen(
-            '',
-           () async { 
-             final result = await context.read<LoginProvider>().logout();
-             if(result == true){
-              context.pushReplacement('/login');
-            }} ,
-           () {
-             context.go('/bookmark');
            },
-           () {
-             context.go('/home');
-           },
-        
-        );
-         }
-       ),
-      
-      body:
-      RefreshIndicator(
-        onRefresh: () async {
-          context.read<BookMarkProvider>().getBookMarkedArticles();
-      },
-        child: Consumer<BookMarkProvider>(
-          builder:(context, provider, _) {
-            if(provider.isLoading) return Center(child: CircularProgressIndicator(),);
-        
-            if(provider.bookMarkedArticles.isEmpty) {
+          );
+        }),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            context.read<BookMarkProvider>().getBookMarkedArticles();
+          },
+          child: Consumer<BookMarkProvider>(builder: (context, provider, _) {
+            if (provider.isLoading)
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+
+            if (provider.bookMarkedArticles.isEmpty) {
               return _buildError(context, 'No Data Found');
             }
-        
+
             return _buildList(provider.bookMarkedArticles, context);
-          }
-        ),
-      )
-    );
+          }),
+        ));
   }
 }
 
-  Widget _buildError(BuildContext context, String message) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, color: Colors.red, size: 56),
-          const SizedBox(height: 12),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: () => context.read<BookMarkProvider>().getBookMarkedArticles(),
-            icon: const Icon(Icons.refresh),
-            label: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
+Widget _buildError(BuildContext context, String message) {
+  return Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.error_outline, color: Colors.red, size: 56),
+        const SizedBox(height: 12),
+        Text(message, textAlign: TextAlign.center),
+        const SizedBox(height: 16),
+        ElevatedButton.icon(
+          onPressed: () =>
+              context.read<BookMarkProvider>().getBookMarkedArticles(),
+          icon: const Icon(Icons.refresh),
+          label: const Text('Retry'),
+        ),
+      ],
+    ),
+  );
+}
 
-
-
-  Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
-    return ListView.builder( 
-      padding: const EdgeInsets.all(12),
-      itemCount: articles.length,
-      itemBuilder: (context, index) => articleCard(articles[index], context),
-    );
-  }
-  
- 
+Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
+  return ListView.builder(
+    padding: const EdgeInsets.all(12),
+    itemCount: articles.length,
+    itemBuilder: (context, index) => articleCard(articles[index], context),
+  );
+}
 
 Widget articleCard(ArticleEntity article, BuildContext context) {
   return GestureDetector(
     onTap: () {
-      context.push(
-        '/article_detail',
-        extra: article
-      );
-    } ,
+      context.push('/article_detail', extra: article);
+    },
     child: Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -143,9 +134,7 @@ Widget articleCard(ArticleEntity article, BuildContext context) {
                     )
                   : const Icon(Icons.image, size: 100),
             ),
-    
             const SizedBox(width: 12),
-    
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,22 +148,17 @@ Widget articleCard(ArticleEntity article, BuildContext context) {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-    
                   const SizedBox(height: 8),
-    
                   Text(
                     article.sourceName,
                     style: const TextStyle(
                       color: Colors.grey,
                     ),
                   ),
-    
                   const SizedBox(height: 4),
-    
                   Text(
                     article.publishedAt != null
-                        ? DateFormat('dd MMM yyyy')
-                            .format(article.publishedAt!)
+                        ? DateFormat('dd MMM yyyy').format(article.publishedAt!)
                         : '',
                     style: const TextStyle(
                       color: Colors.grey,

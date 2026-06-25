@@ -6,8 +6,8 @@ class ApiConstants {
 
   static const String baseUrl = 'https://newsapi.org/v2';
   static const String topHeadlines = '/top-headlines';
+  static const String wallStreesJournal = '/everything';
 
   static String get apiKey => dotenv.env['NEWS_API_KEY'] ?? '';
-
-  
+  static const String wallStreetDomains = 'wsj.com';
 }

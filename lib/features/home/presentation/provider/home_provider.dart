@@ -22,12 +22,10 @@ class NewsProvider extends ChangeNotifier {
   //  _saveArticleBookmark = saveArticleBookmar
 
   List<ArticleEntity> _articles = []; 
-  ArticleEntity? _selectedArticle;
   ArticleStatus _status = ArticleStatus.inital;
   String? _error;
 
   List<ArticleEntity> get articles => _articles;
-  ArticleEntity? get selectedArticle => _selectedArticle;
   ArticleStatus get status => _status;
   String? get error => _error;
   bool get isLoading => _status == ArticleStatus.loading;
