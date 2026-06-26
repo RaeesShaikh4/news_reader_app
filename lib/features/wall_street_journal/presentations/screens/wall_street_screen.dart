@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:news_reader_app/core/constant/app_constants.dart';
 import 'package:news_reader_app/core/widgets/custom_card.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
@@ -35,10 +36,11 @@ class WallStreetScreenState extends State<WallStreetScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Wall Street Journal'),
+          iconTheme: IconThemeData(color: AppConstants.blue),
         ),
         drawer: Consumer<WallStreetProvider>(builder: (context, provider, _) {
           return CustomizeDrawerScreen(
-            email: '',
+            selectedItem: DrawerItem.wallstreet,
             isLoggedOutTapped: () async {
               final result = await context.read<LoginProvider>().logout();
               if (result == true) {
@@ -107,11 +109,12 @@ Widget _buildError(BuildContext context, String message) {
 Widget _buildList(
     List<WallStreetArticleEntity> articles, BuildContext context) {
   return ListView.builder(
-    padding: const EdgeInsets.all(12),
-    itemCount: articles.length,
-   itemBuilder: (context, index) => ArticlCard(article: articles[index], onCardTap: () {
-      context.push('/article_detail', extra: articles[index]);
-    },
-    )
-  );
-    }
+      padding: const EdgeInsets.all(12),
+      itemCount: articles.length,
+      itemBuilder: (context, index) => ArticlCard(
+            article: articles[index],
+            onCardTap: () {
+              context.push('/article_detail', extra: articles[index]);
+            },
+          ));
+}

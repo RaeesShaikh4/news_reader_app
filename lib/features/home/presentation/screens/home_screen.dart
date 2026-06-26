@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:news_reader_app/core/constant/app_constants.dart';
 import 'package:news_reader_app/core/widgets/custom_card.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
@@ -40,13 +41,7 @@ class _HomeSCreenState extends State<HomeSCreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<NewsProvider>().getTopHeadlines();
       context.read<BookMarkProvider>().getBookMarkedArticles();
-      setName();
     });
-  }
-
-  setName() async {
-    final result = await context.read<LoginProvider>().setUserName();
-    userName = result;
   }
 
   @override
@@ -54,10 +49,11 @@ class _HomeSCreenState extends State<HomeSCreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Home'),
+          iconTheme: IconThemeData(color: AppConstants.blue),
         ),
         drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
           return CustomizeDrawerScreen(
-            email: userName,
+            selectedItem: DrawerItem.hone,
             isLoggedOutTapped: () async {
               final result = await context.read<LoginProvider>().logout();
               if (result == true) {
@@ -78,7 +74,7 @@ class _HomeSCreenState extends State<HomeSCreen> {
           onRefresh: () async {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.read<NewsProvider>().getTopHeadlines();
-              context.read<BookMarkProvider>().getBookMarkedArticles(); 
+              context.read<BookMarkProvider>().getBookMarkedArticles();
             });
           },
           child: Consumer<NewsProvider>(builder: (context, provider, _) {
@@ -117,15 +113,15 @@ Widget _buildError(BuildContext context, String message) {
 
 Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
   return ListView.builder(
-    padding: const EdgeInsets.all(12),
-    itemCount: articles.length,
-    itemBuilder: (context, index) => 
-    // articleCard(articles[index], context),
-    ArticlCard(article: articles[index], onCardTap: () {
-      context.push('/article_detail', extra: articles[index]);
-    }
-    )
-  );
+      padding: const EdgeInsets.all(12),
+      itemCount: articles.length,
+      itemBuilder: (context, index) =>
+          // articleCard(articles[index], context),
+          ArticlCard(
+              article: articles[index],
+              onCardTap: () {
+                context.push('/article_detail', extra: articles[index]);
+              }));
 }
 
 // Widget articleCard(ArticleEntity article, BuildContext context) {

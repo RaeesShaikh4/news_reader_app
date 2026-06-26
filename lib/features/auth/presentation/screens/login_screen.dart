@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final size = MediaQuery.of(context).size;
     final loginProvider = Provider.of<LoginProvider>(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: SizedBox(
           height: size.height,
@@ -42,11 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(
                   height: 30,
                 ),
-
                 Image.asset(
                   AppConstants.appLogo,
                 ),
-
                 const SizedBox(
                   height: 60,
                 ),
@@ -103,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final success = await loginProvider.login(
                         email: emailController.text,
                         passowrd: passwordController.text);
-                        RestartWidget.restartApp(context);
+                    RestartWidget.restartApp(context);
 
                     if (success == true) {
                       // Clear previous user's in-memory bookmarks before navigating
@@ -128,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Row(
@@ -140,7 +138,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     Text(
                       'or sign in with',
                       style: GoogleFonts.inter(
@@ -149,11 +146,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.black,
                       ),
                     ),
-
                     const SizedBox(width: 12),
                     Expanded(
                       child: Divider(
-                        color:  AppConstants.black,
+                        color: AppConstants.black,
                         thickness: 1,
                       ),
                     ),
@@ -171,20 +167,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     _socialButton(Icons.apple),
                   ],
                 ),
-                 const SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                   Text(
+                    Text(
                       "Don't have an account?",
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         color: AppConstants.black,
                       ),
                     ),
-                   Text(
+                    Text(
                       "Regoster",
                       style: GoogleFonts.inter(
                         fontSize: 14,
@@ -201,22 +197,23 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   Widget _socialButton(IconData icon) {
-  return Container(
-    width: 50,
-    height: 50,
-    decoration: BoxDecoration(
-      border: Border.all(
-        color: Colors.black54,
-        width: 1.5,
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black54,
+          width: 1.5,
+        ),
+        borderRadius: BorderRadius.circular(10),
       ),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Icon(
-      icon,
-      size: 28,
-      color: Colors.black87,
-    ),
-  );
-}
+      child: Icon(
+        icon,
+        size: 28,
+        color: Colors.black87,
+      ),
+    );
+  }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
+import 'package:news_reader_app/core/constant/app_constants.dart';
 import 'package:news_reader_app/core/widgets/custom_card.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
@@ -38,27 +39,25 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('BookMarks'),
+          iconTheme: IconThemeData(color: AppConstants.blue),
         ),
         drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
           return CustomizeDrawerScreen(
-            email:  '',
-           isLoggedOutTapped:  () async {
+            selectedItem: DrawerItem.bookmark,
+            isLoggedOutTapped: () async {
               final result = await context.read<LoginProvider>().logout();
               if (result == true) {
                 context.read<BookMarkProvider>().clearBookmarks();
                 context.pushReplacement('/login');
               }
             },
-           toBookMarkScreen:  () {
-            },
-            
-           toWallStreetHJournal:  () {
+            toBookMarkScreen: () {},
+            toWallStreetHJournal: () {
               context.go('/wallStreel');
             },
-           toHomeScreen:  () {
-            context.go('/home');
-
-           },
+            toHomeScreen: () {
+              context.go('/home');
+            },
           );
         }),
         body: RefreshIndicator(
@@ -104,11 +103,12 @@ Widget _buildError(BuildContext context, String message) {
 
 Widget _buildList(List<ArticleEntity> articles, BuildContext context) {
   return ListView.builder(
-    padding: const EdgeInsets.all(12),
-    itemCount: articles.length,
-    itemBuilder: (context, index) => ArticlCard(article: articles[index], onCardTap: () {
-      context.push('/article_detail', extra: articles[index]);
-    },
-    )
-  );
+      padding: const EdgeInsets.all(12),
+      itemCount: articles.length,
+      itemBuilder: (context, index) => ArticlCard(
+            article: articles[index],
+            onCardTap: () {
+              context.push('/article_detail', extra: articles[index]);
+            },
+          ));
 }
