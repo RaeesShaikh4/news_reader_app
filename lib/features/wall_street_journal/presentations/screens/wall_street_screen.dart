@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:news_reader_app/core/widgets/custom_card.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/provider/bookmark_provider.dart';
 import 'package:news_reader_app/features/home/presentation/provider/home_provider.dart';
@@ -25,6 +26,7 @@ class WallStreetScreenState extends State<WallStreetScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<WallStreetProvider>().getWallStreetJournal();
+      context.read<BookMarkProvider>().getBookMarkedArticles();
     });
   }
 
@@ -48,9 +50,11 @@ class WallStreetScreenState extends State<WallStreetScreen> {
               context.go('/bookmark');
             },
             toWallStreetHJournal: () {
-              context.go('/wallStreel');
+              // context.go('/wallStreel');
             },
-            toHomeScreen: () {},
+            toHomeScreen: () {
+              context.go('/home');
+            },
           );
         }),
         body: RefreshIndicator(
@@ -63,11 +67,13 @@ class WallStreetScreenState extends State<WallStreetScreen> {
             // }
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.read<WallStreetProvider>().getWallStreetJournal();
+              context.read<BookMarkProvider>().getBookMarkedArticles();
             });
           },
           child: Consumer<WallStreetProvider>(builder: (context, provider, _) {
-            if (provider.isLoading)
+            if (provider.isLoading) {
               return Center(child: CircularProgressIndicator());
+            }
 
             if (provider.status == WallStreetArtivcleStatus.error) {
               return _buildError(context, provider.error!);
@@ -103,96 +109,9 @@ Widget _buildList(
   return ListView.builder(
     padding: const EdgeInsets.all(12),
     itemCount: articles.length,
-    itemBuilder: (context, index) => articleCard(articles[index], context),
-  );
-}
-
-Widget articleCard(WallStreetArticleEntity article, BuildContext context) {
-  return GestureDetector(
-    onTap: () {
-      context.push('/article_detail', extra: article);
+   itemBuilder: (context, index) => ArticlCard(article: articles[index], onCardTap: () {
+      context.push('/article_detail', extra: articles[index]);
     },
-    child: Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: article.urlToImage != null
-                  ? Image.network(
-                      article.urlToImage!,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          const Icon(Icons.image, size: 100),
-                    )
-                  : const Icon(Icons.image, size: 100),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    article.title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    article.sourceName,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        article.publishedAt != null
-                            ? DateFormat('dd MMM yyyy')
-                                .format(article.publishedAt!)
-                            : '',
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
-                      ),
-
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     context.read<BookMarkProvider>().saveBookmark(article);
-                      //   },
-                      //   child: Text('BookMark')
-                      // )
-                      Consumer<BookMarkProvider>(
-                        builder: (context, provider, _) {
-                          return IconButton(
-                              onPressed: () {
-                                provider.toggleBookMark(article);
-                              },
-                              icon: Icon(provider.isBookMark(article.url)
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_border));
-                        },
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
+    )
   );
-}
+    }
