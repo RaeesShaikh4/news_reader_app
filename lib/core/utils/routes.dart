@@ -1,26 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:news_reader_app/di/injection_service.dart';
+import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:news_reader_app/features/bookmarks/presentation/screens/bookmark_screen.dart';
+import 'package:news_reader_app/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:news_reader_app/features/home/domain/entities/article_entity.dart';
 import 'package:news_reader_app/features/home/presentation/screens/article_details_screen.dart';
 import 'package:news_reader_app/features/home/presentation/screens/home_screen.dart';
 import 'package:news_reader_app/features/wall_street_journal/presentations/screens/wall_street_screen.dart';
 
-GoRouter createRouter(bool isLoggedIn) {
-  return GoRouter(initialLocation: isLoggedIn ? '/home' : '/login', routes: [
+GoRouter createRouter() {
+  final auth = sl<LoginProvider>();
+  return GoRouter(
+    initialLocation: '/home',
+    refreshListenable: auth,
+    redirect: (context, state) {
+      if(!auth.initialised) {
+        return '/login';
+      }
+
+      final onLogin = state.matchedLocation ==  '/login';
+
+      if(!auth.isLoggedIn && !onLogin) {
+        return '/login';
+      }
+
+      if(auth.isLoggedIn && onLogin) {
+        return '/home';
+      }
+
+      return null;
+
+    },
+    routes: [
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-    GoRoute(path: '/home', builder: (context, state) => const HomeSCreen()),
-    GoRoute(
-        path: '/wallStreel',
-        builder: (context, state) => const WallStreetScreen()),
-    GoRoute(
-        path: '/bookmark', builder: (context, state) => const BookMarkScreen()),
+    ShellRoute(
+      builder: (context, state, child) {
+        return DashBoardScreen(child: child);
+      },
+      routes: [
+        GoRoute(path: '/home', builder: (context, state) => const HomeSCreen()),
+        GoRoute(
+            path: '/wallStreel',
+            builder: (context, state) => const WallStreetScreen()),
+        GoRoute(
+            path: '/bookmark', builder: (context, state) => const BookMarkScreen()),
+      ],
+    ),
     GoRoute(
         path: '/article_detail',
         builder: (context, state) {
           final article = state.extra as ArticleEntity;
           return ArticleDetailsScreen(article: article);
-        })
+        }),
   ]);
 }

@@ -37,47 +37,47 @@ class _BookMarkScreenState extends State<BookMarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('BookMarks'),
-          iconTheme: IconThemeData(color: AppConstants.blue),
-        ),
-        drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
-          return CustomizeDrawerScreen(
-            selectedItem: DrawerItem.bookmark,
-            isLoggedOutTapped: () async {
-              final result = await context.read<LoginProvider>().logout();
-              if (result == true) {
-                context.read<BookMarkProvider>().clearBookmarks();
-                context.pushReplacement('/login');
-              }
-            },
-            toBookMarkScreen: () {},
-            toWallStreetHJournal: () {
-              context.go('/wallStreel');
-            },
-            toHomeScreen: () {
-              context.go('/home');
-            },
-          );
-        }),
+        // appBar: AppBar(
+        //   title: const Text('BookMarks'),
+        //   iconTheme: IconThemeData(color: AppConstants.blue),
+        // ),
+        // drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
+        //   return CustomizeDrawerScreen(
+        //     selectedItem: DrawerItem.bookmark,
+        //     isLoggedOutTapped: () async {
+        //       final result = await context.read<LoginProvider>().logout();
+        //       if (result == true) {
+        //         context.read<BookMarkProvider>().clearBookmarks();
+        //         context.pushReplacement('/login');
+        //       }
+        //     },
+        //     toBookMarkScreen: () {},
+        //     toWallStreetHJournal: () {
+        //       context.go('/wallStreel');
+        //     },
+        //     toHomeScreen: () {
+        //       context.go('/home');
+        //     },
+        //   );
+        // }),
         body: RefreshIndicator(
-          onRefresh: () async {
-            context.read<BookMarkProvider>().getBookMarkedArticles();
-          },
-          child: Consumer<BookMarkProvider>(builder: (context, provider, _) {
-            if (provider.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+      onRefresh: () async {
+        context.read<BookMarkProvider>().getBookMarkedArticles();
+      },
+      child: Consumer<BookMarkProvider>(builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-            if (provider.bookMarkedArticles.isEmpty) {
-              return _buildError(context, 'No Data Found');
-            }
+        if (provider.bookMarkedArticles.isEmpty) {
+          return _buildError(context, 'No Data Found');
+        }
 
-            return _buildList(provider.bookMarkedArticles, context);
-          }),
-        ));
+        return _buildList(provider.bookMarkedArticles, context);
+      }),
+    ));
   }
 }
 

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:news_reader_app/di/injection_service.dart';
 import 'package:news_reader_app/features/auth/domain/use_cases/log_in_use_case.dart';
 import 'package:news_reader_app/features/auth/domain/use_cases/log_out_use_case.dart';
 import 'package:news_reader_app/features/auth/domain/use_cases/set_user_name_case.dart';
@@ -22,6 +23,20 @@ class LoginProvider extends ChangeNotifier {
 
   String? get emailError => _emailError;
   String? get passwordError => _passWordError;
+
+  bool _isLoggedIn = false;
+  bool get isLoggedIn => _isLoggedIn;
+
+  bool _initialised = false;
+  bool get initialised => _initialised;
+  final SharedPreferences prefs = sl<SharedPreferences>();
+
+  Future<void> initialize() async {
+    // final prefs = await SharedPreferences.getInstance();
+    _isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    _initialised = true;
+    notifyListeners();
+  }
 
   bool validateEmail(String email) {
    print('Email validation called');
@@ -84,6 +99,11 @@ class LoginProvider extends ChangeNotifier {
       password: passowrd,
     );
 
+    if(result){
+      _isLoggedIn = true;
+      notifyListeners();
+    }
+
     return result;
   }
 
@@ -91,6 +111,7 @@ class LoginProvider extends ChangeNotifier {
     print('logeed out-----');
     // final prefs = await SharedPreferences.getInstance();
     final result = await _logOutUseCase(); 
+    _isLoggedIn = false;
     // context.pushReplacement('/login');
     notifyListeners();
     return result;

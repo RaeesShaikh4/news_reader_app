@@ -47,48 +47,48 @@ class _HomeSCreenState extends State<HomeSCreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home'),
-          iconTheme: IconThemeData(color: AppConstants.blue),
-        ),
-        drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
-          return CustomizeDrawerScreen(
-            selectedItem: DrawerItem.hone,
-            isLoggedOutTapped: () async {
-              final result = await context.read<LoginProvider>().logout();
-              if (result == true) {
-                context.read<BookMarkProvider>().clearBookmarks();
-                context.pushReplacement('/login');
-              }
-            },
-            toBookMarkScreen: () {
-              context.go('/bookmark');
-            },
-            toWallStreetHJournal: () {
-              context.go('/wallStreel');
-            },
-            toHomeScreen: () {},
-          );
-        }),
+        // appBar: AppBar(
+        //   title: const Text('Home'),
+        //   iconTheme: IconThemeData(color: AppConstants.blue),
+        // ),
+        // drawer: Consumer<NewsProvider>(builder: (context, provider, _) {
+        //   return CustomizeDrawerScreen(
+        //     selectedItem: DrawerItem.hone,
+        //     isLoggedOutTapped: () async {
+        //       final result = await context.read<LoginProvider>().logout();
+        //       if (result == true) {
+        //         context.read<BookMarkProvider>().clearBookmarks();
+        //         context.pushReplacement('/login');
+        //       }
+        //     },
+        //     toBookMarkScreen: () {
+        //       context.go('/bookmark');
+        //     },
+        //     toWallStreetHJournal: () {
+        //       context.go('/wallStreel');
+        //     },
+        //     toHomeScreen: () {},
+        //   );
+        // }),
         body: RefreshIndicator(
-          onRefresh: () async {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<NewsProvider>().getTopHeadlines();
-              context.read<BookMarkProvider>().getBookMarkedArticles();
-            });
-          },
-          child: Consumer<NewsProvider>(builder: (context, provider, _) {
-            if (provider.isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
+      onRefresh: () async {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.read<NewsProvider>().getTopHeadlines();
+          context.read<BookMarkProvider>().getBookMarkedArticles();
+        });
+      },
+      child: Consumer<NewsProvider>(builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-            if (provider.status == ArticleStatus.error) {
-              return _buildError(context, provider.error!);
-            }
+        if (provider.status == ArticleStatus.error) {
+          return _buildError(context, provider.error!);
+        }
 
-            return _buildList(provider.articles, context);
-          }),
-        ));
+        return _buildList(provider.articles, context);
+      }),
+    ));
   }
 }
 

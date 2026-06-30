@@ -101,14 +101,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     final success = await loginProvider.login(
                         email: emailController.text,
                         passowrd: passwordController.text);
-                    RestartWidget.restartApp(context);
 
                     if (success == true) {
-                      // Clear previous user's in-memory bookmarks before navigating
                       if (context.mounted) {
-                        context.read<BookMarkProvider>().clearBookmarks();
+                        RestartWidget.restartApp(context);
                       }
-                      context.go('/home');
                     }
                   },
                   child: Container(

@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:news_reader_app/core/constant/app_constants.dart';
 import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:provider/provider.dart';
 
-enum DrawerItem { hone, bookmark, wallstreet }
+// enum DrawerItem { hone, bookmark, wallstreet }
 
 class CustomizeDrawerScreen extends StatefulWidget {
   final VoidCallback isLoggedOutTapped;
-  final VoidCallback toBookMarkScreen;
-  final VoidCallback toWallStreetHJournal;
-  final VoidCallback toHomeScreen;
-  final DrawerItem selectedItem;
+  // final VoidCallback toBookMarkScreen;
+  // final VoidCallback toWallStreetHJournal;
+  // final VoidCallback toHomeScreen;
+  // final DrawerItem selectedItem;
 
   const CustomizeDrawerScreen({
     required this.isLoggedOutTapped,
-    required this.toBookMarkScreen,
-    required this.toWallStreetHJournal,
-    required this.toHomeScreen,
-    required this.selectedItem,
+    // required this.toBookMarkScreen,
+    // required this.toWallStreetHJournal,
+    // required this.toHomeScreen,
+    // required this.selectedItem,
   });
 
   @override
@@ -42,6 +43,11 @@ class _CustomizeDrawerScreenState extends State<CustomizeDrawerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).matchedLocation;
+    final isHome = location == '/home';
+    final isBookmark = location == '/bookmark';
+    final isWallstreet = location == '/wallStreel';
+
     return Drawer(
         child: SingleChildScrollView(
       child: Column(
@@ -74,26 +80,38 @@ class _CustomizeDrawerScreenState extends State<CustomizeDrawerScreen> {
               drawerTile(
                 icon: Icons.home_outlined,
                 title: 'Home',
-                isSelected: widget.selectedItem == DrawerItem.hone,
-                onTap: widget.toHomeScreen,
+                isSelected: isHome,
+                onTap: () {
+                  context.go('/home');
+                  Navigator.pop(context);
+                },
               ),
               drawerTile(
                 icon: Icons.bookmark,
                 title: 'Bookmarks',
-                isSelected: widget.selectedItem == DrawerItem.bookmark,
-                onTap: widget.toBookMarkScreen,
+                isSelected: isBookmark,
+                onTap: () {
+                  context.go('/bookmark');
+                  Navigator.pop(context);
+                },
               ),
               drawerTile(
                 icon: Icons.currency_pound,
                 title: 'WallStreet',
-                isSelected: widget.selectedItem == DrawerItem.wallstreet,
-                onTap: widget.toWallStreetHJournal,
+                isSelected: isWallstreet,
+                onTap: () {
+                  context.go('/wallStreel');
+                  Navigator.pop(context);
+                },
               ),
               drawerTile(
                 icon: Icons.logout,
                 title: 'Log out',
                 isSelected: false,
-                onTap: widget.isLoggedOutTapped,
+                onTap: () {
+                  Navigator.pop(context);
+                  widget.isLoggedOutTapped();
+                },
               ),
             ],
           )

@@ -33,14 +33,21 @@ void main() async {
     articleBox: articleBox,
     // wallStreetArticleBox: wallStreetArticleBox,
   );
-  final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  runApp(RestartWidget(child: MyApp(isLoggedIn: isLoggedIn)));
+  await sl<LoginProvider>().initialize();
+  // final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  runApp(RestartWidget(child: MyApp(
+    )));
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
-  MyApp({super.key, required this.isLoggedIn});
-  late final _router = createRouter(isLoggedIn);
+  // final bool isLoggedIn;
+  MyApp({super.key,
+  //  required this.isLoggedIn
+   });
+  // late final _router = createRouter(
+  //   // isLoggedIn
+  //   login
+  //   );
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +65,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        routerConfig: _router,
+        routerConfig: createRouter(),
       ),
     );
   }

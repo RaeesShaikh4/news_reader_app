@@ -34,56 +34,56 @@ class WallStreetScreenState extends State<WallStreetScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Wall Street Journal'),
-          iconTheme: IconThemeData(color: AppConstants.blue),
-        ),
-        drawer: Consumer<WallStreetProvider>(builder: (context, provider, _) {
-          return CustomizeDrawerScreen(
-            selectedItem: DrawerItem.wallstreet,
-            isLoggedOutTapped: () async {
-              final result = await context.read<LoginProvider>().logout();
-              if (result == true) {
-                context.read<BookMarkProvider>().clearBookmarks();
-                context.pushReplacement('/login');
-              }
-            },
-            toBookMarkScreen: () {
-              context.go('/bookmark');
-            },
-            toWallStreetHJournal: () {
-              // context.go('/wallStreel');
-            },
-            toHomeScreen: () {
-              context.go('/home');
-            },
-          );
-        }),
+        // appBar: AppBar(
+        //   title: const Text('Wall Street Journal'),
+        //   iconTheme: IconThemeData(color: AppConstants.blue),
+        // ),
+        // drawer: Consumer<WallStreetProvider>(builder: (context, provider, _) {
+        //   return CustomizeDrawerScreen(
+        //     selectedItem: DrawerItem.wallstreet,
+        //     isLoggedOutTapped: () async {
+        //       final result = await context.read<LoginProvider>().logout();
+        //       if (result == true) {
+        //         context.read<BookMarkProvider>().clearBookmarks();
+        //         context.pushReplacement('/login');
+        //       }
+        //     },
+        //     toBookMarkScreen: () {
+        //       context.go('/bookmark');
+        //     },
+        //     toWallStreetHJournal: () {
+        //       // context.go('/wallStreel');
+        //     },
+        //     toHomeScreen: () {
+        //       context.go('/home');
+        //     },
+        //   );
+        // }),
         body: RefreshIndicator(
-          onRefresh: () async {
-            // await context.read<NewsProvider>().getTopHeadlines();
-            // final box = Hive.box<ArticleModel>('BookMardked_articles');
-            // print('Count: ${box.length}');
-            // for (final article in box.values) {
-            //   print(article.title);
-            // }
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              context.read<WallStreetProvider>().getWallStreetJournal();
-              context.read<BookMarkProvider>().getBookMarkedArticles();
-            });
-          },
-          child: Consumer<WallStreetProvider>(builder: (context, provider, _) {
-            if (provider.isLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
+      onRefresh: () async {
+        // await context.read<NewsProvider>().getTopHeadlines();
+        // final box = Hive.box<ArticleModel>('BookMardked_articles');
+        // print('Count: ${box.length}');
+        // for (final article in box.values) {
+        //   print(article.title);
+        // }
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          context.read<WallStreetProvider>().getWallStreetJournal();
+          context.read<BookMarkProvider>().getBookMarkedArticles();
+        });
+      },
+      child: Consumer<WallStreetProvider>(builder: (context, provider, _) {
+        if (provider.isLoading) {
+          return Center(child: CircularProgressIndicator());
+        }
 
-            if (provider.status == WallStreetArtivcleStatus.error) {
-              return _buildError(context, provider.error!);
-            }
+        if (provider.status == WallStreetArtivcleStatus.error) {
+          return _buildError(context, provider.error!);
+        }
 
-            return _buildList(provider.articles, context);
-          }),
-        ));
+        return _buildList(provider.articles, context);
+      }),
+    ));
   }
 }
 

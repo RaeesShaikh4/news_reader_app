@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:news_reader_app/di/injection_service.dart';
+import 'package:news_reader_app/features/auth/presentation/provider/login_provider.dart';
 import 'package:news_reader_app/features/home/data/models/article_model.dart';
 import 'package:news_reader_app/features/wall_street_journal/data/models/wall_street_article_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,8 +33,8 @@ class AuthLocalDataSourceImple implements AuthLocalDataSource {
 
   Future<bool> login({required String email, required String passowrd}) async {
     await saveLoginStatus(true, email);
-      final userId = prefs.getInt('userId')!;
-      await initalizeBoxesAndSwithUser(userId);
+    final userId = prefs.getInt('userId')!;
+    await initalizeBoxesAndSwithUser(userId);
 
     return true;
   }
@@ -42,17 +43,18 @@ class AuthLocalDataSourceImple implements AuthLocalDataSource {
     print('initalizeBoxesAndSwithUser userId----- $userId');
     await sl.reset();
 
-    final articleBox =
-        await Hive.openBox<ArticleModel>('bookmarks_$userId');
+    final articleBox = await Hive.openBox<ArticleModel>('bookmarks_$userId');
 
-    final wallStreetBox =
-        await Hive.openBox<WallStreetArticleModel>(
-            'wallstreet_bookmarks_$userId');
+    final wallStreetBox = await Hive.openBox<WallStreetArticleModel>(
+        'wallstreet_bookmarks_$userId');
 
     await initDependencies(
       articleBox: articleBox,
       // wallStreetArticleBox: wallStreetBox,
     );
+
+    // After re-initializing dependencies, sync the session state on the new LoginProvider instance
+    await sl<LoginProvider>().initialize();
   }
 
   Future<void> saveLoginStatus(bool isLoggedIn, String? userEmail) async {
